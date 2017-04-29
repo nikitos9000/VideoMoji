@@ -24,6 +24,11 @@ def request_face_emotions_service(frame, faces):
     return face_emotions.api(dict(image=frame, faces=faces, algo='keras'))
 
 
+def request_gaze_direction_service(frame, faces):
+    from services import gaze_direction
+    return gaze_direction.api(dict(image=frame, faces=faces, algo='eye-tracker'))
+
+
 def request_audio_capture_service():
     from services import capture
     return capture.api(dict(source='microphone', duration=5.0))
@@ -51,11 +56,12 @@ def video_loop():
     video_frame = request_video_capture_service()
     faces = request_face_detection_service(video_frame)
     faces_with_emotions = request_face_emotions_service(video_frame, faces)
+    faces_with_gaze_and_emotions = request_gaze_direction_service(video_frame, faces_with_emotions)
+
     voice_with_emotions = request_audio_emotions_service(queue_audio_frames)
     del queue_audio_frames[:]
 
-    print 'Faces:', faces
-    print 'Face Emotions:', faces_with_emotions
+    print 'Face Emotions:', faces_with_gaze_and_emotions
     print 'Voice Emotions:', voice_with_emotions
     return video_frame
 
