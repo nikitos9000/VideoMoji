@@ -45,6 +45,24 @@ queue_audio_frames = []
 queue_audio_sample_rate = 0
 
 
+class EmotionState(object):
+    def __init__(self, history_duration):
+        self.video_emotions = {}
+        self.audio_emotions = {}
+
+    def push_face_emotions(self, emotions):
+        pass
+
+    def push_face_gaze(self, gaze):
+        pass
+
+    def push_voice_emotions(self, emotions):
+        pass
+
+    def get_emotions(self):
+        pass
+
+
 def audio_loop():
     global queue_audio_sample_rate
     while True:

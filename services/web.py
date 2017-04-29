@@ -8,7 +8,7 @@ from bottle import run, route, request, response
 
 
 def load_module(name):
-    return imp.load_source(name, name + '.py')
+    return imp.load_source(name, name + '/__init__.py')
 
 
 @route('/api', method='POST')
