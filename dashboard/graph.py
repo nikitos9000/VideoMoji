@@ -1,5 +1,8 @@
 import time
 import plotly
+import matplotlib
+matplotlib.use('TkAgg')
+
 import matplotlib.pyplot as plt
 from collections import defaultdict
 

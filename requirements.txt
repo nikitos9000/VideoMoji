@@ -8,11 +8,11 @@ matplotlib==2.0.0
 Pillow==4.1.0
 
 cognitive-face==1.2.5
-deepgaze==0.1
 dlib==19.4.0
 
 h5py==2.7.0
 tensorflow==1.1.0rc1
+tensorflow-gpu==1.1.0rc1
 Keras==2.0.2
 
 PyAudio==0.2.11

@@ -17,7 +17,7 @@ def request_video_capture_service():
 
 def request_face_detection_service(frame):
     from services import face_detection
-    return face_detection.api(dict(image=frame, algo='opencv'))
+    return face_detection.api(dict(image=frame, algo='dlib'))
 
 
 def request_face_emotions_service(frame, faces):
@@ -72,7 +72,6 @@ def video_loop():
 def plot(faces, voice):
     if faces:
         face = faces[0]
-#        happiness = face['emotions']['happy']
         graph.plot(face['emotions'])
 
     if voice:
