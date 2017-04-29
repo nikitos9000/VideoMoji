@@ -1,10 +1,10 @@
 import cv2
 
-faceCascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
+faceCascade = cv2.CascadeClassifier('data/face_detection/haarcascade_frontalface_default.xml')
 
 
 def detect(frame):
-    img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY,1)
+    img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY, 1)
 
     faces = faceCascade.detectMultiScale(
         img_gray,

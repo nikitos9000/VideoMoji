@@ -4,10 +4,10 @@ from keras.models import model_from_json
 
 
 def _init_model():
-    with open('data/emotions/keras/model.json') as model_file:
+    with open('data/face_emotions/keras/model.json') as model_file:
         model_json = model_file.read()
     model = model_from_json(model_json)
-    model.load_weights('data/emotions/keras/model.h5')
+    model.load_weights('data/face_emotions/keras/model.h5')
     return model
 
 emotions_model = _init_model()
