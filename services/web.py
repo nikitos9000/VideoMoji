@@ -3,6 +3,7 @@
 import sys
 import imp
 import json
+import cPickle
 from gevent import monkey; monkey.patch_all()
 from bottle import run, route, request, response
 
@@ -13,9 +14,11 @@ def load_module(name):
 
 @route('/api', method='POST')
 def api():
-    params = request.forms
+    params = json.loads(request.body.read().strip())
+    params = cPickle.loads(params)
     result = module.api(params)
     response.add_header('Content-Type', 'application/json')
+    result = cPickle.dumps(result)
     return json.dumps(result)
 
 
