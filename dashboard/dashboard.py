@@ -3,6 +3,7 @@
 import os
 import sys
 import cv2
+import threading
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -22,16 +23,47 @@ def request_face_emotions_service(frame, faces):
     return face_emotions.api(dict(image=frame, faces=faces, algo='keras'))
 
 
+def request_audio_capture_service():
+    from services import capture
+    return capture.api(dict(source='microphone', duration=5.0))
+
+
+def request_audio_emotions_service(audio_frames):
+    from services import voice_emotions
+    result = voice_emotions.api(dict(algo='vokaturi', samples=audio_frames, sample_rate=44100))
+    del audio_frames[:]
+    return result
+
+
+queue_audio_frames = []
+queue_audio_sample_rate = 0
+
+
+def audio_loop():
+    global queue_audio_sample_rate
+    while True:
+        audio = request_audio_capture_service()
+        queue_audio_frames.append(audio['samples'])
+        queue_audio_sample_rate = audio['sample_rate']
+
+
 def loop():
     frame = request_capture_service()
     faces = request_face_detection_service(frame)
     faces_with_emotions = request_face_emotions_service(frame, faces)
-    print faces
-    print faces_with_emotions
+    voice_with_emotions = request_audio_emotions_service(queue_audio_frames)
+
+    print 'Faces:', faces
+    print 'Face Emotions:', faces_with_emotions
+    print 'Voice Emotions:', voice_with_emotions
     return frame
 
 
 if __name__ == '__main__':
+    audio_thread = threading.Thread(target=audio_loop)
+    audio_thread.daemon = True
+    audio_thread.start()
+
     while True:
         cv2_frame = loop()
         cv2.imshow('Video', cv2_frame)
