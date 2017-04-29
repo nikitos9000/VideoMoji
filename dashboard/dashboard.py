@@ -3,12 +3,13 @@
 import os
 import sys
 import cv2
+import time
 import threading
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def request_capture_service():
+def request_video_capture_service():
     from services import capture
     return capture.api(dict(source='webcam', scale=0.5))
 
@@ -30,8 +31,7 @@ def request_audio_capture_service():
 
 def request_audio_emotions_service(audio_frames):
     from services import voice_emotions
-    result = voice_emotions.api(dict(algo='vokaturi', samples=audio_frames, sample_rate=44100))
-    del audio_frames[:]
+    result = voice_emotions.api(dict(algo='vokaturi', samples=audio_frames, sample_rate=queue_audio_sample_rate))
     return result
 
 
@@ -47,16 +47,17 @@ def audio_loop():
         queue_audio_sample_rate = audio['sample_rate']
 
 
-def loop():
-    frame = request_capture_service()
-    faces = request_face_detection_service(frame)
-    faces_with_emotions = request_face_emotions_service(frame, faces)
+def video_loop():
+    video_frame = request_video_capture_service()
+    faces = request_face_detection_service(video_frame)
+    faces_with_emotions = request_face_emotions_service(video_frame, faces)
     voice_with_emotions = request_audio_emotions_service(queue_audio_frames)
+    del queue_audio_frames[:]
 
     print 'Faces:', faces
     print 'Face Emotions:', faces_with_emotions
     print 'Voice Emotions:', voice_with_emotions
-    return frame
+    return video_frame
 
 
 if __name__ == '__main__':
@@ -65,10 +66,15 @@ if __name__ == '__main__':
     audio_thread.start()
 
     while True:
-        cv2_frame = loop()
+        start_time = time.time()
+        cv2_frame = video_loop()
         cv2.imshow('Video', cv2_frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
+        end_time = time.time()
+        if end_time - start_time < 1.0/25:
+            time.sleep(1.0/25 - (end_time - start_time))
 
     cv2.destroyAllWindows()

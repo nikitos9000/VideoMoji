@@ -1,8 +1,10 @@
+import sys
 import numpy as np
 
 from Vokaturi import Vokaturi
 
-Vokaturi.load("data/voice_emotions/Vokaturi/Vokaturi_mac.so")
+Vokaturi_platform = dict(linux='linux64', linux2='linux64', darwin='mac')[sys.platform]
+Vokaturi.load("data/voice_emotions/Vokaturi/Vokaturi_%s.so" % Vokaturi_platform)
 
 
 def extract_emotions(samples, sample_rate):
@@ -10,19 +12,13 @@ def extract_emotions(samples, sample_rate):
         return {}
 
     samples = np.concatenate(samples)
-    print "Allocating Vokaturi sample array..."
     buffer_length = len(samples)
     print "   %d samples, %d channels" % (buffer_length, samples.ndim)
     c_buffer = Vokaturi.SampleArrayC(buffer_length)
     c_buffer[:] = samples[:] / 32768.0
 
-    print "Creating VokaturiVoice..."
     voice = Vokaturi.Voice(sample_rate, buffer_length)
-
-    print "Filling VokaturiVoice with samples..."
     voice.fill(buffer_length, c_buffer)
-
-    print "Extracting emotions from VokaturiVoice..."
     quality = Vokaturi.Quality()
     emotion_probabilities = Vokaturi.EmotionProbabilities()
     voice.extract(quality, emotion_probabilities)
