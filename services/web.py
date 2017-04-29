@@ -2,10 +2,9 @@
 
 import sys
 import imp
-import json
 import cPickle
 from gevent import monkey; monkey.patch_all()
-from bottle import run, route, request, response
+from bottle import run, route, request
 
 
 def load_module(name):
@@ -14,14 +13,11 @@ def load_module(name):
 
 @route('/api', method='POST')
 def api():
-#    params = json.loads(request.body.read().strip())
     params = request.body.read()
     params = cPickle.loads(params)
     result = module.api(params)
-#    response.add_header('Content-Type', 'application/json')
-#    response.
-    result = cPickle.dumps(result)
-    return result #json.dumps(result)
+    result = cPickle.dumps(result, protocol=2)
+    return result
 
 
 if __name__ == '__main__':

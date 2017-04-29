@@ -19,8 +19,8 @@ def request_video_capture_service():
 
 def request_face_detection_service(frame):
     from services import face_detection
-    return services.api_call(dict(image=frame, algo='dlib'), face_detection.PORT)
-#    return face_detection.api(dict(image=frame, algo='dlib'))
+#    return services.api_call(dict(image=frame, algo='dlib'), face_detection.PORT)
+    return face_detection.api(dict(image=frame, algo='dlib'))
 
 
 def request_face_emotions_service(frame, faces):
