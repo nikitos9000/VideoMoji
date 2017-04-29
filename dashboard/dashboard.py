@@ -17,10 +17,17 @@ def request_face_detection_service(frame):
     return face_detection.api(dict(image=frame, algo='opencv'))
 
 
+def request_face_emotions_service(frame, faces):
+    from services import face_emotions
+    return face_emotions.api(dict(image=frame, faces=faces, algo='keras'))
+
+
 def loop():
     frame = request_capture_service()
     faces = request_face_detection_service(frame)
+    faces_with_emotions = request_face_emotions_service(frame, faces)
     print faces
+    print faces_with_emotions
     return frame
 
 
