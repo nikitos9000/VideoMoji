@@ -5,13 +5,14 @@ import sys
 import cv2
 import time
 import threading
+import graph
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def request_video_capture_service():
     from services import capture
-    return capture.api(dict(source='webcam', scale=0.5))
+    return capture.api(dict(source='webcam', scale=1.0))
 
 
 def request_face_detection_service(frame):
@@ -63,7 +64,19 @@ def video_loop():
 
     print 'Face Emotions:', faces_with_gaze_and_emotions
     print 'Voice Emotions:', voice_with_emotions
+
+    plot(faces_with_gaze_and_emotions, voice_with_emotions)
     return video_frame
+
+
+def plot(faces, voice):
+    if faces:
+        face = faces[0]
+#        happiness = face['emotions']['happy']
+        graph.plot(face['emotions'])
+
+    if voice:
+        pass
 
 
 if __name__ == '__main__':

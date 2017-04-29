@@ -16,3 +16,5 @@ tensorflow==1.1.0rc1
 Keras==2.0.2
 
 PyAudio==0.2.11
+
+plotly==2.0.8
