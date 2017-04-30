@@ -6,6 +6,7 @@ import cv2
 import time
 import threading
 import graph
+import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -81,6 +82,16 @@ def video_loop():
     return video_frame
 
 
+def read_frame_from_string(frame_string):
+    img_array = np.asarray(bytearray(frame_string), dtype=np.uint8)
+    return cv2.imdecode(img_array, 3)
+
+
+def write_frame_to_string(frame):
+    content = cv2.imencode('.png', frame)[1]
+    return content
+
+
 def media_process(video_frame, audio_samples):
     faces = request_face_detection_service(video_frame)
     faces = request_face_emotions_service(video_frame, faces)
@@ -91,7 +102,7 @@ def media_process(video_frame, audio_samples):
     print 'Faces:', faces
     print 'Voice:', voice
 
-    plot(faces, voice)
+#    plot(faces, voice)
 
     return
 
@@ -105,10 +116,14 @@ def plot(faces, voice):
         pass
 
 
-if __name__ == '__main__':
+def run_voice_thread():
     audio_thread = threading.Thread(target=audio_loop)
     audio_thread.daemon = True
     audio_thread.start()
+
+
+if __name__ == '__main__':
+    run_voice_thread()
 
     while True:
         start_time = time.time()

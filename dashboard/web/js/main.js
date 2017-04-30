@@ -1,8 +1,8 @@
 (function () {
   var video = document.querySelector('video');
 
-  var pictureWidth = 240;
-  var pictureHeight = 180;
+  var pictureWidth = 640;
+  var pictureHeight = 480;
 
   function checkRequirements() {
     var deferred = new $.Deferred();
@@ -111,24 +111,34 @@
   function setupVideoPush() {
     var deferred = new $.Deferred();
 
+    var rcanvas = document.querySelector('#step1 canvas.visible');
+    var rctx = rcanvas.getContext('2d');
+
     var canvas = document.querySelector('#step1 canvas.hidden');
     var ctx = canvas.getContext('2d');
 
     var scaledWidth = 240, scaledHeight = Math.round((scaledWidth / pictureWidth) * pictureHeight);
-    canvas.width = scaledWidth;
-    canvas.height = scaledHeight;
+    canvas.width = pictureWidth;
+    canvas.height = pictureHeight;
+
+    rcanvas.width = scaledWidth;
+    rcanvas.height = scaledHeight;
 
     function pushFrame() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(video, 0, 0, scaledWidth, scaledHeight);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         $.ajax({type: 'POST', url: 'api', dataType: 'json', data: {'imgBase64': canvas.toDataURL()}}).done(function(data) {
-            console.log('pushed');
+            var img = new Image();
+            img.src = data.imgBase64;
+            img.onload = function() {
+                rctx.drawImage(img, 0, 0, rcanvas.width, rcanvas.height);
+            }
         });
 
-        setTimeout(pushFrame, 1000);
+        setTimeout(pushFrame, 1000/5);
     }
 
-    setTimeout(pushFrame, 10);
+    setTimeout(pushFrame, 0);
 
     deferred.resolve();
     return deferred.promise();
