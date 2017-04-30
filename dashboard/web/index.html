@@ -7,13 +7,13 @@
 
     <title>Video Emoji Demo</title>
 
-    <meta name="Description" content="Face tracking demo in JavaScript"/>
-    <meta property="og:image" content="http://kdzwinel.github.io/JS-face-tracking-demo/img/step1.png"/>
-    <link rel="image_src" href="http://kdzwinel.github.io/JS-face-tracking-demo/img/step1.png"/>
+    <meta name="Description" content="Video Emoji Demo"/>
 
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/main.css"/>
     <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <script src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js"> </script>
 </head>
 <body class="step1">
 
@@ -22,16 +22,21 @@
     <div class="jumbotron">
         <div id="step1">
             <figure class="not-ready">
-                <video  width="640" autoplay></video>
-                <canvas width="640" class="visible"></canvas>
-                <canvas width="640" class="hidden"></canvas>
+                <video  width="1280" autoplay></video>
+                <canvas width="1280" class="hidden"></canvas>
             </figure>
             <h2><i class="glyphicon glyphicon-facetime-video"></i></h2>
+        </div>
+        <div id="step1">
+                <canvas width="1280" class="visible"></canvas>
+        </div>
+        <div id="panel1">
         </div>
     </div>
 </div>
 <!-- /container -->
 
+<script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.js"></script>
 <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="js/vendor/modernizr.min.js"></script>
 <script src="js/vendor/bootstrap.min.js"></script>

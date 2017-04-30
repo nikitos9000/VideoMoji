@@ -1,8 +1,8 @@
 (function () {
   var video = document.querySelector('video');
 
-  var pictureWidth = 640;
-  var pictureHeight = 480;
+  var pictureWidth = 1280;
+  var pictureHeight = 720;
 
   function checkRequirements() {
     var deferred = new $.Deferred();
@@ -117,7 +117,7 @@
     var canvas = document.querySelector('#step1 canvas.hidden');
     var ctx = canvas.getContext('2d');
 
-    var scaledWidth = 240, scaledHeight = Math.round((scaledWidth / pictureWidth) * pictureHeight);
+    var scaledWidth = 480, scaledHeight = Math.round((scaledWidth / pictureWidth) * pictureHeight);
     canvas.width = pictureWidth;
     canvas.height = pictureHeight;
 
@@ -125,6 +125,7 @@
     rcanvas.height = scaledHeight;
 
     function pushFrame() {
+        console.log('Width: ' + canvas.width + ', Height: ' + canvas.height);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         $.ajax({type: 'POST', url: 'api', dataType: 'json', data: {'imgBase64': canvas.toDataURL()}}).done(function(data) {
@@ -133,9 +134,28 @@
             img.onload = function() {
                 rctx.drawImage(img, 0, 0, rcanvas.width, rcanvas.height);
             }
+
+            var emotionsX = [];
+            var emotionsY = [];
+
+            $.each(data.emotions, function(key, value) {
+                emotionsY.push(key);
+                emotionsX.push(value);
+            });
+
+            var emotionsData = [{
+                x: emotionsX,
+                y: emotionsY,
+                type:'bar',
+                orientation: 'h',
+                marker: { color: ['red', 'green', 'blue', 'red', 'green', 'blue'] }
+            }];
+            var emotionsLayout = {title:'Emotions', showlegend:false, xaxis:{range:[0.0, 1.0]}};
+
+            Plotly.newPlot('panel1', emotionsData, emotionsLayout, {staticPlot: true});
         });
 
-        setTimeout(pushFrame, 1000/5);
+        setTimeout(pushFrame, 1000/2);
     }
 
     setTimeout(pushFrame, 0);

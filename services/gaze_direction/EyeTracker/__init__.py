@@ -18,8 +18,6 @@ tree_ens.loadparams(tree_param_filelist)
 
 
 def detect_gaze(image, faces):
-    image = cv.fromarray(image)
-
     for face in faces:
         rect = face['rect']
         eyes_loc = ff.find_eyes(image, rect)

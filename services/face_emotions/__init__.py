@@ -10,4 +10,7 @@ def api(params):
         import emotions_keras
         return emotions_keras.extract_emotions(params['image'], params['faces'])
 
+    if params['algo'] == 'ms':
+        import emotions_ms
+        return emotions_ms.extract_emotions(params['image'], params['faces'])
     return

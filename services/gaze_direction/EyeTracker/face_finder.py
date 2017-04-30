@@ -17,10 +17,7 @@ class FaceFinder(object):
 
     @staticmethod
     def get_subimg(image, (x, y, w, h)):
-        subimg = cv.CreateImage((w, h,), 8, 3)
-        src_region = cv.GetSubRect(image, (x, y, w, h))
-        cv.Copy(src_region, subimg)
-        return subimg
+        return image[y: y + h, x: x + w, :]
 
     # TODO: write cv2 versions of this eventually:
     def find_eyes(self, image, f):
@@ -32,7 +29,7 @@ class FaceFinder(object):
         faceimg = self.get_subimg(image, f)
 
         # TODO : maybe figure this out later why these parameters help...
-        eyes = self.eye_cascade.detectMultiScale(numpy.asarray(faceimg[:, :]), minNeighbors=self.min_neighbors)#, maxSize = max_eye)
+        eyes = self.eye_cascade.detectMultiScale(faceimg, minNeighbors=self.min_neighbors)
 
         if eyes != ():
             # make their coordinates refer to the image frame and not the face box:

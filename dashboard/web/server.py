@@ -13,27 +13,67 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import dashboard
 
 
+def select_largest_face(faces):
+    wh = 0
+    largest_face = None
+    for face in faces:
+        x, y, w, h = face['rect']
+        if w*h > wh:
+            wh = w*h
+            largest_face = face
+    return largest_face
+
+
+from collections import defaultdict
+history = defaultdict(list)
+
+
+def update_history(values):
+    if values:
+        result = {}
+        for key, value in values.iteritems():
+            history[key].append(value)
+            key_history = history[key][-5:]
+            result[key] = sum(key_history) / len(key_history)
+        return result
+
+
+def convert_emotions(emotions):
+    emotions['angry'] *= 0.8
+    emotions['fear'] *= 0.7
+    emotions['happy'] *= 2.0
+    emotions['surprise'] *= 2.0
+    emotions['neutral'] *= 1.0
+    emotions['sad'] *=0.25
+    return emotions
+
+
 @route('/api', method='POST')
 def api():
-    import time
-    s1 = time.time()
     response.content_type = 'application/json'
     image_base64 = request.forms['imgBase64']
     image_base64 = image_base64.replace('data:image/png;base64,', '')
     image = base64.urlsafe_b64decode(image_base64)
 
     frame = dashboard.read_frame_from_string(image)
-    s2 = time.time()
-    dashboard.media_process(frame, [])
-    s3 = time.time()
+    frame, faces, voice = dashboard.media_process(frame, [])
+    face = select_largest_face(faces)
 
     image = dashboard.write_frame_to_string(frame)
     image_base64 = base64.b64encode(image)
     image_base64 = 'data:image/png;base64,' + image_base64
-    s4 = time.time()
-    print 'STAT:', (s2-s1), (s3-s2), (s4-s3), 'total:', (s4-s1)
 
-    return json.dumps({'imgBase64': image_base64})
+#    emotions = face and convert_emotions(face['emotions'])
+    emotions = face and face['emotions']
+
+    metrics = {
+        'engagement': 0.5,
+        'goodwill': 0.8
+    }
+
+    emotions = update_history(emotions)
+
+    return json.dumps({'imgBase64': image_base64, 'emotions': emotions, 'metrics': metrics})
 
 
 @route('/<path:path>')

@@ -5,7 +5,6 @@ import sys
 import cv2
 import time
 import threading
-import graph
 import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,19 +12,19 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def request_video_capture_service():
     from services import capture
-    return capture.api(dict(source='webcam', scale=0.5))
+    return capture.api(dict(source='webcam', scale=1.0))
 
 
 def request_face_detection_service(frame):
     from services import face_detection
 #    import services
 #    return services.api_call(dict(image=frame, algo='dlib'), face_detection.PORT)
-    return face_detection.api(dict(image=frame, algo='opencv'))
+    return face_detection.api(dict(image=frame, algo='dlib'))
 
 
 def request_face_emotions_service(frame, faces):
     from services import face_emotions
-    return face_emotions.api(dict(image=frame, faces=faces, algo='keras'))
+    return face_emotions.api(dict(image=frame, faces=faces, algo='ms'))
 
 
 def request_gaze_direction_service(frame, faces):
@@ -46,24 +45,6 @@ def request_audio_emotions_service(audio_frames):
 
 queue_audio_frames = []
 queue_audio_sample_rate = 0
-
-
-class EmotionState(object):
-    def __init__(self, history_duration):
-        self.video_emotions = {}
-        self.audio_emotions = {}
-
-    def push_face_emotions(self, emotions):
-        pass
-
-    def push_face_gaze(self, gaze):
-        pass
-
-    def push_voice_emotions(self, emotions):
-        pass
-
-    def get_emotions(self):
-        pass
 
 
 def audio_loop():
@@ -92,6 +73,15 @@ def write_frame_to_string(frame):
     return content
 
 
+def draw_face_frames(frame, faces):
+    for face in faces:
+        rect = face['rect']
+        x, y, w, h = rect
+
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    return frame
+
+
 def media_process(video_frame, audio_samples):
     faces = request_face_detection_service(video_frame)
     faces = request_face_emotions_service(video_frame, faces)
@@ -99,21 +89,12 @@ def media_process(video_frame, audio_samples):
 
     voice = request_audio_emotions_service(audio_samples)
 
+    video_frame = draw_face_frames(video_frame, faces)
+
     print 'Faces:', faces
     print 'Voice:', voice
 
-#    plot(faces, voice)
-
-    return
-
-
-def plot(faces, voice):
-    if faces:
-        face = faces[0]
-        graph.plot(face['emotions'])
-
-    if voice:
-        pass
+    return video_frame, faces, voice
 
 
 def run_voice_thread():

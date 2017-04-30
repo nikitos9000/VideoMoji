@@ -17,7 +17,7 @@ def _predict_face_emotions(face):
     resized_img = cv2.resize(face, (48, 48), interpolation=cv2.INTER_AREA)
     image = resized_img.reshape(1, 1, 48, 48)
     list_of_list = emotions_model.predict(image, batch_size=1)  # verbose=1)
-    angry, fear, happy, sad, surprise, neutral = [prob for lst in list_of_list for prob in lst]
+    angry, fear, happy, sad, surprise, neutral = [float(prob) for lst in list_of_list for prob in lst]
     return dict(angry=angry, fear=fear, happy=happy, sad=sad, surprise=surprise, neutral=neutral)
 
 
