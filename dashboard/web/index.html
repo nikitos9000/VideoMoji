@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>JavaScript Face Tracking Demo</title>
+
+    <meta name="Description" content="Face tracking demo in JavaScript"/>
+    <meta property="og:image" content="http://kdzwinel.github.io/JS-face-tracking-demo/img/step1.png"/>
+    <link rel="image_src" href="http://kdzwinel.github.io/JS-face-tracking-demo/img/step1.png"/>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+</head>
+<body class="step1">
+
+<div class="container">
+    <div class="alert alert-danger"><strong>Oops!</strong> <span></span></div>
+    <div class="jumbotron">
+        <div id="step1">
+            <h1><i class="glyphicon glyphicon-facetime-video"></i></h1>
+
+            <figure class="not-ready">
+                <video  width="640" autoplay></video>
+                <canvas width="640" class="visible"></canvas>
+                <canvas width="640" class="hidden"></canvas>
+            </figure>
+        </div>
+    </div>
+</div>
+<!-- /container -->
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="js/vendor/modernizr.min.js"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/vendor/tracking-min.js"></script>
+<script src="js/vendor/data/face-min.js"></script>
+<script src="js/vendor/gif.js"></script>
+<script src="js/vendor/gif.worker.js"></script>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -9,18 +9,17 @@ import graph
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import services
-
 
 def request_video_capture_service():
     from services import capture
-    return capture.api(dict(source='webcam', scale=1.0))
+    return capture.api(dict(source='webcam', scale=0.5))
 
 
 def request_face_detection_service(frame):
     from services import face_detection
+#    import services
 #    return services.api_call(dict(image=frame, algo='dlib'), face_detection.PORT)
-    return face_detection.api(dict(image=frame, algo='dlib'))
+    return face_detection.api(dict(image=frame, algo='opencv'))
 
 
 def request_face_emotions_service(frame, faces):
@@ -76,18 +75,24 @@ def audio_loop():
 
 def video_loop():
     video_frame = request_video_capture_service()
+    media_process(video_frame, queue_audio_frames)
+    del queue_audio_frames[:]
+
+    return video_frame
+
+
+def media_process(video_frame, audio_samples):
     faces = request_face_detection_service(video_frame)
     faces_with_emotions = request_face_emotions_service(video_frame, faces)
     faces_with_gaze_and_emotions = request_gaze_direction_service(video_frame, faces_with_emotions)
 
-    voice_with_emotions = request_audio_emotions_service(queue_audio_frames)
-    del queue_audio_frames[:]
+    voice_with_emotions = request_audio_emotions_service(audio_samples)
+    plot(faces_with_gaze_and_emotions, voice_with_emotions)
 
     print 'Face Emotions:', faces_with_gaze_and_emotions
     print 'Voice Emotions:', voice_with_emotions
 
-    plot(faces_with_gaze_and_emotions, voice_with_emotions)
-    return video_frame
+    return
 
 
 def plot(faces, voice):
@@ -109,11 +114,11 @@ if __name__ == '__main__':
         cv2_frame = video_loop()
         cv2.imshow('Video', cv2_frame)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
-        end_time = time.time()
-        if end_time - start_time < 1.0/25:
-            time.sleep(1.0/25 - (end_time - start_time))
+#        end_time = time.time()
+#        if end_time - start_time < 1.0/25:
+#            time.sleep(1.0/25 - (end_time - start_time))
 
     cv2.destroyAllWindows()

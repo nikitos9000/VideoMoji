@@ -1,6 +1,8 @@
+from .. import utils
 NAME = 'capture'
 
 
+@utils.timer
 def api(params):
     if params['source'] == 'webcam':
         import webcam

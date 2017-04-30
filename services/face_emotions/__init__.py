@@ -1,7 +1,10 @@
+from .. import utils
+
 PORT = 8082
 NAME = 'FaceEmotions'
 
 
+@utils.timer
 def api(params):
     if params['algo'] == 'keras':
         import emotions_keras

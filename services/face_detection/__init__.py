@@ -1,7 +1,10 @@
+from .. import utils
+
 PORT = 8081
 NAME = 'FaceDetection'
 
 
+@utils.timer
 def api(params):
     if params['algo'] == 'opencv':
         import detection_opencv
