@@ -91,3 +91,7 @@ ENV/
 # IDEA
 .idea/
 trash/
+
+# Lua
+VGG_FACE.t7
+shape_predictor_68_face_landmarks.dat

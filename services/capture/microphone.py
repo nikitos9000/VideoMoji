@@ -20,6 +20,5 @@ def capture(duration):
     for _ in xrange(0, int(RATE / FRAMES_PER_BUFFER * duration)):
         data = stream.read(FRAMES_PER_BUFFER, exception_on_overflow=False)
         samples.append(np.fromstring(data, dtype=np.int16))
-    samples = np.concatenate(samples)
 
     return dict(samples=samples, sample_rate=RATE, channels=CHANNELS, sample_size=audio.get_sample_size(FORMAT))

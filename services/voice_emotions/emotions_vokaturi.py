@@ -27,6 +27,8 @@ def extract_emotions(samples, sample_rate):
     if not quality.valid:
         return {}
 
-    return dict(neutral=emotion_probabilities.neutrality, happy=emotion_probabilities.happiness,
-                sad=emotion_probabilities.sadness, angry=emotion_probabilities.anger,
-                fear=emotion_probabilities.fear)
+    emotions = dict(neutral=emotion_probabilities.neutrality, happy=emotion_probabilities.happiness,
+                    sad=emotion_probabilities.sadness, angry=emotion_probabilities.anger,
+                    fear=emotion_probabilities.fear)
+
+    return dict(emotions=emotions)

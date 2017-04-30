@@ -69,7 +69,7 @@ def audio_loop():
     global queue_audio_sample_rate
     while True:
         audio = request_audio_capture_service()
-        queue_audio_frames.append(audio['samples'])
+        queue_audio_frames.extend(audio['samples'])
         queue_audio_sample_rate = audio['sample_rate']
 
 
@@ -83,14 +83,15 @@ def video_loop():
 
 def media_process(video_frame, audio_samples):
     faces = request_face_detection_service(video_frame)
-    faces_with_emotions = request_face_emotions_service(video_frame, faces)
-    faces_with_gaze_and_emotions = request_gaze_direction_service(video_frame, faces_with_emotions)
+    faces = request_face_emotions_service(video_frame, faces)
+    faces = request_gaze_direction_service(video_frame, faces)
 
-    voice_with_emotions = request_audio_emotions_service(audio_samples)
-    plot(faces_with_gaze_and_emotions, voice_with_emotions)
+    voice = request_audio_emotions_service(audio_samples)
 
-    print 'Face Emotions:', faces_with_gaze_and_emotions
-    print 'Voice Emotions:', voice_with_emotions
+    print 'Faces:', faces
+    print 'Voice:', voice
+
+    plot(faces, voice)
 
     return
 
@@ -116,9 +117,5 @@ if __name__ == '__main__':
 
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
-
-#        end_time = time.time()
-#        if end_time - start_time < 1.0/25:
-#            time.sleep(1.0/25 - (end_time - start_time))
 
     cv2.destroyAllWindows()
