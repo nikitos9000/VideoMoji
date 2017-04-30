@@ -117,7 +117,7 @@
     var canvas = document.querySelector('#step1 canvas.hidden');
     var ctx = canvas.getContext('2d');
 
-    var scaledWidth = 480, scaledHeight = Math.round((scaledWidth / pictureWidth) * pictureHeight);
+    var scaledWidth = 800, scaledHeight = Math.round((scaledWidth / pictureWidth) * pictureHeight);
     canvas.width = pictureWidth;
     canvas.height = pictureHeight;
 
@@ -132,6 +132,7 @@
             var img = new Image();
             img.src = data.imgBase64;
             img.onload = function() {
+                console.log('Width: ' + rcanvas.width + ', Height: ' + rcanvas.height);
                 rctx.drawImage(img, 0, 0, rcanvas.width, rcanvas.height);
             }
 
@@ -150,12 +151,19 @@
                 orientation: 'h',
                 marker: { color: ['red', 'green', 'blue', 'red', 'green', 'blue'] }
             }];
-            var emotionsLayout = {title:'Emotions', showlegend:false, xaxis:{range:[0.0, 1.0]}};
+            var emotionsLayout = {
+                title: 'Emotions',
+                showlegend: false,
+                xaxis: {range: [0.0, 1.0]},
+                autosize: false,
+                width: 500,
+                height: 500
+            };
 
             Plotly.newPlot('panel1', emotionsData, emotionsLayout, {staticPlot: true});
         });
 
-        setTimeout(pushFrame, 200);
+        setTimeout(pushFrame, 1000);
     }
 
     setTimeout(pushFrame, 0);

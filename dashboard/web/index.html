@@ -17,20 +17,21 @@
 </head>
 <body class="step1">
 
-<div class="container">
-    <div class="alert alert-danger"><strong>Oops!</strong> <span></span></div>
-    <div class="jumbotron">
-        <div id="step1">
-            <figure class="not-ready">
-                <video  width="1280" autoplay></video>
-                <canvas width="1280" class="hidden"></canvas>
-            </figure>
+<div id="step1" style="float: left;">
+    <figure class="not-ready">
+        <video  width="1280" autoplay class="hidden"></video>
+        <canvas width="1280" class="hidden"></canvas>
+    </figure>
+</div>
+
+<div class="alert alert-danger"><strong>Oops!</strong> <span></span></div>
+
+<div class="container" style="max-width: 100%; width: 100%">
+    <div class="row">
+        <div id="panel1" class="col-md-4"></div>
+        <div id="step1" class="col-md-6">
+            <canvas width="1280" class="visible"></canvas>
             <h2><i class="glyphicon glyphicon-facetime-video"></i></h2>
-        </div>
-        <div id="step1">
-                <canvas width="1280" class="visible"></canvas>
-        </div>
-        <div id="panel1">
         </div>
     </div>
 </div>

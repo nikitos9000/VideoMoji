@@ -33,7 +33,7 @@ def update_history(values):
         result = {}
         for key, value in values.iteritems():
             history[key].append(value)
-            key_history = history[key][-5:]
+            key_history = history[key][-3:]
             result[key] = sum(key_history) / len(key_history)
         return result
 

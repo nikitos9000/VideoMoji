@@ -86,6 +86,11 @@ def draw_face_frames(frame, faces):
 
 
 def draw_eye_frames(frame, faces):
+    def draw_pupil(face_img, pupcoord_normalized, (ex, ey, ew, eh), rad=5, color=(255, 0, 0)):
+        pupcoord = ((pupcoord_normalized[0]+1)/2*ew+ex, (pupcoord_normalized[1]+1)/2*eh+ey)
+        pupcoord = tuple([int(round(p)) for p in pupcoord])
+        cv2.circle(face_img, pupcoord, rad, color)
+
     for face in faces:
         if 'eyes' in face:
             eyes = face['eyes']
@@ -98,11 +103,17 @@ def draw_eye_frames(frame, faces):
             cv2.rectangle(frame, (left_x, left_y), (left_x + left_w, left_y + left_h), (0, 0, 255), 2)
             cv2.rectangle(frame, (right_x, right_y), (right_x + right_w, right_y + right_h), (0, 0, 255), 2)
 
+#            left_pupil_x, left_pupil_y = left_pupil
+#            right_pupil_x, right_pupil_y = right_pupil
+
+            draw_pupil(frame, left_pupil, left_eye_loc)
+            draw_pupil(frame, right_pupil, right_eye_loc)
+
     return frame
 
 
 def media_process(idx, video_frame, audio_samples):
-    video_frame = request_video_capture_service()
+#    video_frame = request_video_capture_service()
     video_frame = cv2.resize(video_frame, None, fx=0.5, fy=0.5)
     faces = request_face_detection_service(video_frame)
     faces = request_face_emotions_service(idx, video_frame, faces)
