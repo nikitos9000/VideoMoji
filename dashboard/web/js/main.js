@@ -80,9 +80,6 @@
       video.src = window.URL.createObjectURL(stream);
 
       window.stream = stream;
-      window.streamRecorder = window.stream.record();
-
-      setTimeout(postStream, 1000);
 
       video.addEventListener("loadedmetadata", function (e) {
         //get video width and height as it might be different than we requested
@@ -111,18 +108,37 @@
     return deferred.promise();
   }
 
-  function postStream() {
-    window.streamRecorder.getRecordedData(postStream2);
-  }
+  function setupVideoPush() {
+    var deferred = new $.Deferred();
 
-  function postStream2(blob) {
-    console.log('Cool: ' + blob.length);
+    var canvas = document.querySelector('#step1 canvas.hidden');
+    var ctx = canvas.getContext('2d');
+
+    var scaledWidth = 240, scaledHeight = Math.round((scaledWidth / pictureWidth) * pictureHeight);
+    canvas.width = scaledWidth;
+    canvas.height = scaledHeight;
+
+    function pushFrame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, 0, 0, scaledWidth, scaledHeight);
+        $.ajax({type: 'POST', url: 'api', dataType: 'json', data: {'imgBase64': canvas.toDataURL()}}).done(function(data) {
+            console.log('pushed');
+        });
+
+        setTimeout(pushFrame, 1000);
+    }
+
+    setTimeout(pushFrame, 10);
+
+    deferred.resolve();
+    return deferred.promise();
   }
 
   function setupAll() {
     checkRequirements()
       .then(searchForFrontCamera)
       .then(setupVideo)
+      .then(setupVideoPush)
       .done(function () {
         //Hide the 'enable the camera' info
         $('#step1 figure').removeClass('not-ready');
