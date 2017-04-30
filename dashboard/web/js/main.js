@@ -1,8 +1,8 @@
 (function () {
   var video = document.querySelector('video');
 
-  var pictureWidth = 1280;
-  var pictureHeight = 720;
+  var pictureWidth = 640;
+  var pictureHeight = 480;
 
   function checkRequirements() {
     var deferred = new $.Deferred();
@@ -155,7 +155,7 @@
             Plotly.newPlot('panel1', emotionsData, emotionsLayout, {staticPlot: true});
         });
 
-        setTimeout(pushFrame, 1000/2);
+        setTimeout(pushFrame, 200);
     }
 
     setTimeout(pushFrame, 0);

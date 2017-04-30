@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def request_video_capture_service():
     from services import capture
-    return capture.api(dict(source='webcam', scale=1.0))
+    return capture.api(dict(source='video', scale=1.0))
 
 
 def request_face_detection_service(frame):
@@ -22,9 +22,12 @@ def request_face_detection_service(frame):
     return face_detection.api(dict(image=frame, algo='dlib'))
 
 
-def request_face_emotions_service(frame, faces):
+def request_face_emotions_service(idx, frame, faces):
     from services import face_emotions
-    return face_emotions.api(dict(image=frame, faces=faces, algo='ms'))
+
+    if idx % 4 == 0:
+        return face_emotions.api(dict(image=frame, faces=faces, algo='ms'))
+    return faces
 
 
 def request_gaze_direction_service(frame, faces):
@@ -57,7 +60,7 @@ def audio_loop():
 
 def video_loop():
     video_frame = request_video_capture_service()
-    media_process(video_frame, queue_audio_frames)
+    media_process(0, video_frame, queue_audio_frames)
     del queue_audio_frames[:]
 
     return video_frame
@@ -82,14 +85,33 @@ def draw_face_frames(frame, faces):
     return frame
 
 
-def media_process(video_frame, audio_samples):
+def draw_eye_frames(frame, faces):
+    for face in faces:
+        if 'eyes' in face:
+            eyes = face['eyes']
+            left_eye, right_eye = eyes
+            left_pupil, left_eye_loc = left_eye
+            right_pupil, right_eye_loc = right_eye
+            left_x, left_y, left_w, left_h = left_eye_loc
+            right_x, right_y, right_w, right_h = right_eye_loc
+
+            cv2.rectangle(frame, (left_x, left_y), (left_x + left_w, left_y + left_h), (0, 0, 255), 2)
+            cv2.rectangle(frame, (right_x, right_y), (right_x + right_w, right_y + right_h), (0, 0, 255), 2)
+
+    return frame
+
+
+def media_process(idx, video_frame, audio_samples):
+    video_frame = request_video_capture_service()
+    video_frame = cv2.resize(video_frame, None, fx=0.5, fy=0.5)
     faces = request_face_detection_service(video_frame)
-    faces = request_face_emotions_service(video_frame, faces)
+    faces = request_face_emotions_service(idx, video_frame, faces)
     faces = request_gaze_direction_service(video_frame, faces)
 
     voice = request_audio_emotions_service(audio_samples)
 
     video_frame = draw_face_frames(video_frame, faces)
+    video_frame = draw_eye_frames(video_frame, faces)
 
     print 'Faces:', faces
     print 'Voice:', voice

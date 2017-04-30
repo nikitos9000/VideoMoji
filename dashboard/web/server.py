@@ -47,16 +47,19 @@ def convert_emotions(emotions):
     emotions['sad'] *=0.25
     return emotions
 
+idx = 0
 
 @route('/api', method='POST')
 def api():
+    global idx
     response.content_type = 'application/json'
     image_base64 = request.forms['imgBase64']
     image_base64 = image_base64.replace('data:image/png;base64,', '')
     image = base64.urlsafe_b64decode(image_base64)
 
+    idx += 1
     frame = dashboard.read_frame_from_string(image)
-    frame, faces, voice = dashboard.media_process(frame, [])
+    frame, faces, voice = dashboard.media_process(idx, frame, [])
     face = select_largest_face(faces)
 
     image = dashboard.write_frame_to_string(frame)
@@ -64,7 +67,7 @@ def api():
     image_base64 = 'data:image/png;base64,' + image_base64
 
 #    emotions = face and convert_emotions(face['emotions'])
-    emotions = face and face['emotions']
+    emotions = face and 'emotions' in face and face['emotions']
 
     metrics = {
         'engagement': 0.5,
